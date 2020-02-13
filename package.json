@@ -20,7 +20,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "lint": "eslint . --ext .js,.ts,.tsx",
+    "lint": "eslint ./src --ext .js,.ts,.tsx",
     "prepare": "yarn build"
   },
   "devDependencies": {
