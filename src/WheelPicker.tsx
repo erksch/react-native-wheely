@@ -17,9 +17,12 @@ interface Props {
   onChange: (selected: any) => void;
   selectedIndicatorStyle?: StyleProp<ViewStyle>;
   itemTextStyle?: Animated.WithAnimatedValue<StyleProp<TextStyle>>;
+  itemStyle?: Animated.WithAnimatedValue<StyleProp<ViewStyle>>;
   itemHeight?: number;
-  containerHeight?: number;
   containerStyle?: Animated.WithAnimatedValue<StyleProp<ViewStyle>>;
+  rotationFunction?: (x: number) => number;
+  textFadeFunction?: (x: number) => number;
+  visibleRest?: number;
 }
 
 const WheelPicker: React.FC<Props> = ({
@@ -27,29 +30,34 @@ const WheelPicker: React.FC<Props> = ({
   options,
   onChange,
   selectedIndicatorStyle = {},
-  containerHeight = 180,
   containerStyle = {},
+  itemStyle = {},
   itemTextStyle = {},
-  itemHeight = 60,
+  itemHeight = 40,
+  rotationFunction = (x: number) => 1 - Math.pow(1 / 2, x),
+  textFadeFunction = (x: number) => Math.pow(1 / 3, x),
+  visibleRest = 2,
 }) => {
   const [scrollY] = useState(new Animated.Value(0));
   const scrollViewRef = useRef<Animated.AnimatedComponent<ScrollView>>(null);
   const sortedOptions = options.sort((a, b) => b - a);
-  const paddedOptions = [undefined, ...sortedOptions, undefined];
+  const paddedOptions = (() => {
+    const array = [...sortedOptions];
+    for (let i = 0; i < visibleRest; i++) {
+      array.unshift(undefined);
+      array.push(undefined);
+    }
+    return array;
+  })();
   const selectedIndex = paddedOptions.indexOf(selected);
 
   const scrollTo = (index: number) => {
     if (scrollViewRef.current) {
-      scrollViewRef.current.getNode().scrollTo({ y: (index - 1) * itemHeight });
+      scrollViewRef.current
+        .getNode()
+        .scrollTo({ y: (index - visibleRest) * itemHeight });
     }
   };
-
-  const currentScrollIndex = Animated.add(
-    Animated.divide(scrollY, itemHeight),
-    1,
-  );
-  const relativeScrollIndex = (index: number) =>
-    Animated.subtract(index, currentScrollIndex);
 
   const handleMomentumScrollEnd = (
     event: NativeSyntheticEvent<NativeScrollEvent>,
@@ -62,43 +70,106 @@ const WheelPicker: React.FC<Props> = ({
     onChange(sortedOptions[index]);
   };
 
-  const rotateX = (index: number) =>
-    Animated.multiply(relativeScrollIndex(index), 0.8);
+  const currentScrollIndex = Animated.add(
+    Animated.divide(scrollY, itemHeight),
+    visibleRest,
+  );
+  const relativeScrollIndex = (index: number) =>
+    Animated.subtract(index, currentScrollIndex);
 
-  const abs = (value: any) =>
-    value.interpolate({
-      inputRange: [-1, 0, 1],
-      outputRange: [1, 0, 1],
+  const rotateX = (index: number) =>
+    relativeScrollIndex(index).interpolate({
+      inputRange: (() => {
+        const range = [0];
+        for (let i = 1; i <= visibleRest + 1; i++) {
+          range.unshift(-i);
+          range.push(i);
+        }
+        return range;
+      })(),
+      outputRange: (() => {
+        const range = [0];
+        for (let x = 1; x <= visibleRest + 1; x++) {
+          const y = rotationFunction(x);
+          range.unshift(y);
+          range.push(y);
+        }
+        return range;
+      })(),
     });
 
-  const textOpacity = (index: number) =>
-    Animated.subtract(
-      1,
-      Animated.multiply(abs(relativeScrollIndex(index)), 0.75),
-    );
+  const translateY = (index: number) =>
+    relativeScrollIndex(index).interpolate({
+      inputRange: (() => {
+        const range = [0];
+        for (let i = 1; i <= visibleRest + 1; i++) {
+          range.unshift(-i);
+          range.push(i);
+        }
+        return range;
+      })(),
+      outputRange: (() => {
+        const range = [0];
+        for (let i = 1; i <= visibleRest + 1; i++) {
+          let y =
+            (itemHeight / 2) *
+            (1 - Math.sin(Math.PI / 2 - rotationFunction(i)));
+          for (let j = 1; j < i; j++) {
+            y += itemHeight * (1 - Math.sin(Math.PI / 2 - rotationFunction(j)));
+          }
+          range.unshift(y);
+          range.push(-y);
+        }
+        return range;
+      })(),
+    });
 
+  const opacity = (index: number) =>
+    relativeScrollIndex(index).interpolate({
+      inputRange: (() => {
+        const range = [0];
+        for (let i = 1; i <= visibleRest + 1; i++) {
+          range.unshift(-i);
+          range.push(i);
+        }
+        return range;
+      })(),
+      outputRange: (() => {
+        const range = [1];
+        for (let x = 1; x <= visibleRest + 1; x++) {
+          const y = textFadeFunction(x);
+          range.unshift(y);
+          range.push(y);
+        }
+        return range;
+      })(),
+    });
+
+  const containerHeight = (1 + visibleRest * 2) * itemHeight;
   const AnyScrollView: any = Animated.ScrollView;
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          height: containerHeight,
+        },
+        containerStyle,
+      ]}
+    >
       <View
         style={[
           styles.selectedIndicator,
           selectedIndicatorStyle,
           {
-            top: itemHeight,
+            transform: [{ translateY: -itemHeight / 2 }],
             height: itemHeight,
           },
         ]}
       />
       <AnyScrollView
-        style={[
-          styles.scrollView,
-          containerStyle,
-          {
-            height: containerHeight,
-          },
-        ]}
+        style={styles.scrollView}
         scrollEventThrottle={1}
         onContentSizeChange={() => {
           scrollTo(selectedIndex);
@@ -119,9 +190,13 @@ const WheelPicker: React.FC<Props> = ({
               styles.option,
               {
                 height: itemHeight,
-                transform: [{ rotateX: rotateX(index) }],
-                opacity: textOpacity(index),
+                transform: [
+                  { rotateX: rotateX(index) },
+                  { translateY: translateY(index) },
+                ],
+                opacity: opacity(index),
               },
+              itemStyle,
             ]}
             key={`option-${index}`}
           >
