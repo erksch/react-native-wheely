@@ -7,13 +7,9 @@ import {
   Animated,
   ViewStyle,
   ScrollView,
+  View,
 } from 'react-native';
-import {
-  Container,
-  SelectedIndicator,
-  StyledAnimatedScrollView,
-  Option,
-} from './WheelPicker.styled';
+import styles from './WheelPicker.styles';
 
 interface Props {
   selected: any;
@@ -81,12 +77,28 @@ const WheelPicker: React.FC<Props> = ({
       Animated.multiply(abs(relativeScrollIndex(index)), 0.75),
     );
 
+  const AnyScrollView: any = Animated.ScrollView;
+
   return (
-    <Container>
-      <SelectedIndicator height={itemHeight} style={selectedIndicatorStyle} />
-      <StyledAnimatedScrollView
-        height={containerHeight}
-        style={containerStyle}
+    <View style={styles.container}>
+      <View
+        style={[
+          styles.selectedIndicator,
+          selectedIndicatorStyle,
+          {
+            top: itemHeight,
+            height: itemHeight,
+          },
+        ]}
+      />
+      <AnyScrollView
+        style={[
+          styles.scrollView,
+          containerStyle,
+          {
+            height: containerHeight,
+          },
+        ]}
         scrollEventThrottle={1}
         onContentSizeChange={() => {
           scrollTo(selectedIndex);
@@ -102,19 +114,22 @@ const WheelPicker: React.FC<Props> = ({
         ref={scrollViewRef}
       >
         {paddedOptions.map((option, index) => (
-          <Option
-            height={itemHeight}
-            style={{
-              transform: [{ rotateX: rotateX(index) }],
-              opacity: textOpacity(index),
-            }}
+          <Animated.View
+            style={[
+              styles.option,
+              {
+                height: itemHeight,
+                transform: [{ rotateX: rotateX(index) }],
+                opacity: textOpacity(index),
+              },
+            ]}
             key={`option-${index}`}
           >
             <Animated.Text style={itemTextStyle}>{option}</Animated.Text>
-          </Option>
+          </Animated.View>
         ))}
-      </StyledAnimatedScrollView>
-    </Container>
+      </AnyScrollView>
+    </View>
   );
 };
 
