@@ -1,5 +1,6 @@
 # react-native-wheely
 
+[![CircleCI](https://circleci.com/gh/erksch/react-native-wheely.svg?style=svg)](https://circleci.com/gh/erksch/react-native-wheely)
 [![npm package](https://badge.fury.io/js/react-native-wheely.svg)](https://www.npmjs.com/package/react-native-wheely)
 [![npm downloads](https://img.shields.io/npm/dm/react-native-wheely.svg)](https://www.npmjs.com/package/react-native-wheely)
 

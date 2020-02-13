@@ -1,0 +1,21 @@
+version: 2
+jobs:
+  lint:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run: yarn install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+      - run: yarn lint
+
+workflows:
+  version: 2
+  pipeline:
+    jobs:
+      - lint
