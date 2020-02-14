@@ -21,7 +21,7 @@ interface Props {
   itemHeight?: number;
   containerStyle?: Animated.WithAnimatedValue<StyleProp<ViewStyle>>;
   rotationFunction?: (x: number) => number;
-  textFadeFunction?: (x: number) => number;
+  opacityFunction?: (x: number) => number;
   visibleRest?: number;
 }
 
@@ -35,7 +35,7 @@ const WheelPicker: React.FC<Props> = ({
   itemTextStyle = {},
   itemHeight = 40,
   rotationFunction = (x: number) => 1 - Math.pow(1 / 2, x),
-  textFadeFunction = (x: number) => Math.pow(1 / 3, x),
+  opacityFunction = (x: number) => Math.pow(1 / 3, x),
   visibleRest = 2,
 }) => {
   const [scrollY] = useState(new Animated.Value(0));
@@ -137,7 +137,7 @@ const WheelPicker: React.FC<Props> = ({
       outputRange: (() => {
         const range = [1];
         for (let x = 1; x <= visibleRest + 1; x++) {
-          const y = textFadeFunction(x);
+          const y = opacityFunction(x);
           range.unshift(y);
           range.push(y);
         }
