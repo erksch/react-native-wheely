@@ -8,6 +8,7 @@ import {
   ViewStyle,
   ScrollView,
   View,
+  Text,
 } from 'react-native';
 import styles from './WheelPicker.styles';
 
@@ -16,10 +17,10 @@ interface Props {
   options: any[];
   onChange: (selected: any) => void;
   selectedIndicatorStyle?: StyleProp<ViewStyle>;
-  itemTextStyle?: Animated.WithAnimatedValue<StyleProp<TextStyle>>;
-  itemStyle?: Animated.WithAnimatedValue<StyleProp<ViewStyle>>;
+  itemTextStyle?: StyleProp<TextStyle>;
+  itemStyle?: StyleProp<ViewStyle>;
   itemHeight?: number;
-  containerStyle?: Animated.WithAnimatedValue<StyleProp<ViewStyle>>;
+  containerStyle?: StyleProp<ViewStyle>;
   rotationFunction?: (x: number) => number;
   opacityFunction?: (x: number) => number;
   visibleRest?: number;
@@ -202,7 +203,7 @@ const WheelPicker: React.FC<Props> = ({
             ]}
             key={`option-${index}`}
           >
-            <Animated.Text style={itemTextStyle}>{option}</Animated.Text>
+            <Text style={itemTextStyle}>{option}</Text>
           </Animated.View>
         ))}
       </AnyScrollView>
