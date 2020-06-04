@@ -23,6 +23,7 @@ interface Props {
   rotationFunction?: (x: number) => number;
   opacityFunction?: (x: number) => number;
   visibleRest?: number;
+  decelerationRate?: "normal" | "fast" | number;
 }
 
 const WheelPicker: React.FC<Props> = ({
@@ -37,6 +38,7 @@ const WheelPicker: React.FC<Props> = ({
   rotationFunction = (x: number) => 1 - Math.pow(1 / 2, x),
   opacityFunction = (x: number) => Math.pow(1 / 3, x),
   visibleRest = 2,
+  decelerationRate = 'fast',
 }) => {
   const [scrollY] = useState(new Animated.Value(0));
   const scrollViewRef = useRef<Animated.AnimatedComponent<ScrollView>>(null);
@@ -180,7 +182,7 @@ const WheelPicker: React.FC<Props> = ({
         )}
         onMomentumScrollEnd={handleMomentumScrollEnd}
         snapToOffsets={[...Array(paddedOptions.length)].map((x, i) => i * itemHeight)}
-        decelerationRate="fast"
+        decelerationRate={decelerationRate}
         showsVerticalScrollIndicator={false}
         ref={scrollViewRef}
       >
