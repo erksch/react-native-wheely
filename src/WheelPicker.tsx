@@ -179,7 +179,7 @@ const WheelPicker: React.FC<Props> = ({
           { useNativeDriver: true },
         )}
         onMomentumScrollEnd={handleMomentumScrollEnd}
-        snapToInterval={itemHeight}
+        snapToOffsets={[...Array(paddedOptions.length)].map((x, i) => i * itemHeight)}
         decelerationRate="fast"
         showsVerticalScrollIndicator={false}
         ref={scrollViewRef}
