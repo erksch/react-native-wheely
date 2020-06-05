@@ -53,6 +53,7 @@ function CityPicker() {
 |itemStyle | StyleProp\<ViewStyle\>         | Style for the option's container. |
 |itemTextStyle| StyleProp\<TextStyle\>    | Style for the option's text. |
 |containerStyle| StyleProp\<ViewStyle\> | Style of the picker. |
+|selectedIndicatorStyle| StyleProp\<ViewStyle\> | Style of overlaying selected-indicator in the middle of the picker. |
 |rotationFunction| (x: number) => number | Function to determine the x rotation of items based on their current distance to the center (which is x). Default is ![rotation equation](https://latex.codecogs.com/gif.latex?%5Csmall%20f%28x%29%20%3D%201%20-%20%5Cleft%20%28%201%5Cover2%20%5Cright%20%29%20%5E%7Bx%7D) |
 |opacityFunction | (x: number) => number | Function to determine the opacity of items based on their current distance to the center (which is x). Default is ![opacity equation](https://latex.codecogs.com/gif.latex?%5Csmall%20f%28x%29%20%3D%20%5Cleft%20%28%201%5Cover3%20%5Cright%20%29%20%5E%7Bx%7D)
 |decelerationRate| "normal", "fast", number | How quickly the underlying scroll view decelerates after the user lifts their finger. See the [ScrollView docs](https://facebook.github.io/react-native/docs/scrollview.html#decelerationrate). Default is "fast". |
