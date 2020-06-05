@@ -25,6 +25,7 @@ interface Props {
   opacityFunction?: (x: number) => number;
   visibleRest?: number;
   decelerationRate?: "normal" | "fast" | number;
+  scrollEventThrottle: number;
 }
 
 const WheelPicker: React.FC<Props> = ({
@@ -40,6 +41,7 @@ const WheelPicker: React.FC<Props> = ({
   opacityFunction = (x: number) => Math.pow(1 / 3, x),
   visibleRest = 2,
   decelerationRate = 'fast',
+  scrollEventThrottle = 1,
 }) => {
   const [scrollY] = useState(new Animated.Value(0));
   const scrollViewRef = useRef<Animated.AnimatedComponent<ScrollView>>(null);
@@ -173,7 +175,7 @@ const WheelPicker: React.FC<Props> = ({
       />
       <AnyScrollView
         style={styles.scrollView}
-        scrollEventThrottle={1}
+        scrollEventThrottle={scrollEventThrottle}
         onContentSizeChange={() => {
           scrollTo(selectedIndex);
         }}
