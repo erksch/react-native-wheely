@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
   StyleProp,
   TextStyle,
@@ -6,7 +6,6 @@ import {
   NativeScrollEvent,
   Animated,
   ViewStyle,
-  ScrollView,
   View,
   Text,
 } from 'react-native';
@@ -24,8 +23,8 @@ interface Props {
   rotationFunction?: (x: number) => number;
   opacityFunction?: (x: number) => number;
   visibleRest?: number;
-  decelerationRate?: "normal" | "fast" | number;
-  scrollEventThrottle: number;
+  decelerationRate?: 'normal' | 'fast' | number;
+  scrollEventThrottle?: number;
 }
 
 const WheelPicker: React.FC<Props> = ({
@@ -44,7 +43,6 @@ const WheelPicker: React.FC<Props> = ({
   scrollEventThrottle = 1,
 }) => {
   const [scrollY] = useState(new Animated.Value(0));
-  const scrollViewRef = useRef<Animated.AnimatedComponent<ScrollView>>(null);
   const sortedOptions = options.sort((a, b) => b - a);
   const paddedOptions = (() => {
     const array = [...sortedOptions];
@@ -54,15 +52,8 @@ const WheelPicker: React.FC<Props> = ({
     }
     return array;
   })();
-  const selectedIndex = paddedOptions.indexOf(selected);
 
-  const scrollTo = (index: number) => {
-    if (scrollViewRef.current) {
-      scrollViewRef.current
-        .getNode()
-        .scrollTo({ y: (index - visibleRest) * itemHeight });
-    }
-  };
+  const selectedIndex = paddedOptions.indexOf(selected);
 
   const handleMomentumScrollEnd = (
     event: NativeSyntheticEvent<NativeScrollEvent>,
@@ -93,11 +84,11 @@ const WheelPicker: React.FC<Props> = ({
         return range;
       })(),
       outputRange: (() => {
-        const range = [0];
+        const range = ['0deg'];
         for (let x = 1; x <= visibleRest + 1; x++) {
           const y = rotationFunction(x);
-          range.unshift(y);
-          range.push(y);
+          range.unshift(`${y}deg`);
+          range.push(`${y}deg`);
         }
         return range;
       })(),
@@ -151,7 +142,6 @@ const WheelPicker: React.FC<Props> = ({
     });
 
   const containerHeight = (1 + visibleRest * 2) * itemHeight;
-  const AnyScrollView: any = Animated.ScrollView;
 
   return (
     <View
@@ -173,23 +163,28 @@ const WheelPicker: React.FC<Props> = ({
           },
         ]}
       />
-      <AnyScrollView
+      <Animated.FlatList
         style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
         scrollEventThrottle={scrollEventThrottle}
-        onContentSizeChange={() => {
-          scrollTo(selectedIndex);
-        }}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: true },
         )}
         onMomentumScrollEnd={handleMomentumScrollEnd}
-        snapToOffsets={[...Array(paddedOptions.length)].map((x, i) => i * itemHeight)}
+        snapToOffsets={[...Array(paddedOptions.length)].map(
+          (x, i) => i * itemHeight,
+        )}
         decelerationRate={decelerationRate}
-        showsVerticalScrollIndicator={false}
-        ref={scrollViewRef}
-      >
-        {paddedOptions.map((option, index) => (
+        initialScrollIndex={selectedIndex}
+        getItemLayout={(data: any, index: number) => ({
+          length: itemHeight,
+          offset: itemHeight * index,
+          index,
+        })}
+        data={paddedOptions}
+        keyExtractor={(item: any, index: number) => index.toString()}
+        renderItem={({ item: option, index }: any) => (
           <Animated.View
             style={[
               styles.option,
@@ -207,8 +202,8 @@ const WheelPicker: React.FC<Props> = ({
           >
             <Text style={itemTextStyle}>{option}</Text>
           </Animated.View>
-        ))}
-      </AnyScrollView>
+        )}
+      />
     </View>
   );
 };
