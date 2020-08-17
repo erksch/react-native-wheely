@@ -53,7 +53,7 @@ const WheelPicker: React.FC<Props> = ({
     return array;
   })();
 
-  const selectedIndex = paddedOptions.indexOf(selected);
+  const selectedIndex = sortedOptions.indexOf(selected);
 
   const handleMomentumScrollEnd = (
     event: NativeSyntheticEvent<NativeScrollEvent>,
@@ -70,6 +70,7 @@ const WheelPicker: React.FC<Props> = ({
     Animated.divide(scrollY, itemHeight),
     visibleRest,
   );
+
   const relativeScrollIndex = (index: number) =>
     Animated.subtract(index, currentScrollIndex);
 
