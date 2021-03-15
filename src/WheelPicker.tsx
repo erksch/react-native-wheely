@@ -14,7 +14,7 @@ import styles from './WheelPicker.styles';
 interface Props {
   selectedIndex: number;
   options: any[];
-  onChange: (selected: any) => void;
+  onChange: (index: number) => void;
   selectedIndicatorStyle?: StyleProp<ViewStyle>;
   itemTextStyle?: TextStyle;
   itemStyle?: ViewStyle;
