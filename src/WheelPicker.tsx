@@ -71,7 +71,7 @@ const WheelPicker: React.FC<Props> = ({
     [visibleRest, scrollY, itemHeight],
   );
 
-  const handleMomentumScrollEnd = (
+  const handleMomentumScrollEnd = useCallback((
     event: NativeSyntheticEvent<NativeScrollEvent>,
   ) => {
     const offsetY = event.nativeEvent.contentOffset.y;
@@ -79,7 +79,7 @@ const WheelPicker: React.FC<Props> = ({
     const last = Math.floor(offsetY % itemHeight);
     if (last > itemHeight / 2) index++;
     onChange(index);
-  };
+  }, [itemHeight, onChange]);
 
   const relativeScrollIndex = useCallback(
     (index: number) => Animated.subtract(index, currentScrollIndex),
