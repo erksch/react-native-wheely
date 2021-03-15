@@ -8,7 +8,7 @@ An all JavaScript, highly customizable wheel picker for react native.
 
 <img src="./screenshots/design_5_gray.jpg" align="center"  alt="drawing" height="200"/><img src="./screenshots/design_5_blue.jpg" align="center" alt="drawing" height="200"/><img src="./screenshots/design_5_plane.jpg" align="center"  alt="drawing" height="200" /><img src="./screenshots/design_5_gray_box.jpg" align="center" alt="drawing" height="200" /><img src="./screenshots/design_3_gray.jpg" align="center" alt="drawing" height="110" /><img src="./screenshots/design_3_plane.jpg" align="center" alt="drawing" height="150" />
 
-## Installation 
+## Installation
 
 Install with npm
 
@@ -29,32 +29,32 @@ import React, { useState } from 'react';
 import WheelPicker from 'react-native-wheely';
 
 function CityPicker() {
-  const [selected, setSelected] = useState('Berlin');
-  
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
   return (
-    <WheelPicker 
+    <WheelPicker
+      selectedIndex={selected}
       options={['Berlin', 'London', 'Amsterdam']}
-      selected={selected}
-      onChange={(city) => setSelected(city)}
+      onChange={(index) => setSelectedIndex(index)}
     />
   );
 }
-``` 
+```
 
 ## Props
 
-| Name        | Type                    | Description   |
-|-------------|-------------------------|----------------------------------|
-|options  | any[]  | Options to be displayed be the wheel picker. |
-|selected    | any  | Currently selected option. |
-|onChange     | (selected: any) => void           | Handler that is called when the selected option changes. |
-|visibleRest| number | Amount of additional options that are visible in each direction. Default is 2, resulting in 5 visible options. |
-|itemHeight        | number                  | Height of each option in the picker. Default is 40. |
-|itemStyle | StyleProp\<ViewStyle\>         | Style for the option's container. |
-|itemTextStyle| StyleProp\<TextStyle\>    | Style for the option's text. |
-|containerStyle| StyleProp\<ViewStyle\> | Style of the picker. |
-|selectedIndicatorStyle| StyleProp\<ViewStyle\> | Style of overlaying selected-indicator in the middle of the picker. |
-|rotationFunction| (x: number) => number | Function to determine the x rotation of items based on their current distance to the center (which is x). Default is ![rotation equation](https://latex.codecogs.com/gif.latex?%5Csmall%20f%28x%29%20%3D%201%20-%20%5Cleft%20%28%201%5Cover2%20%5Cright%20%29%20%5E%7Bx%7D) |
-|opacityFunction | (x: number) => number | Function to determine the opacity of items based on their current distance to the center (which is x). Default is ![opacity equation](https://latex.codecogs.com/gif.latex?%5Csmall%20f%28x%29%20%3D%20%5Cleft%20%28%201%5Cover3%20%5Cright%20%29%20%5E%7Bx%7D)
-|decelerationRate| "normal", "fast", number | How quickly the underlying scroll view decelerates after the user lifts their finger. See the [ScrollView docs](https://facebook.github.io/react-native/docs/scrollview.html#decelerationrate). Default is "fast". |
-|scrollEventThrottle| number | How often the scroll event will be fired while scrolling (as a time interval in ms). Impacts tradeof between scroll performance and tracking accuracy. See the [ScrollView docs](https://facebook.github.io/react-native/docs/scrollview.html#scrolleventthrottle). Default is 1.
+| Name                   | Type                     | Description                                                                                                                                                                                                                                                                       |
+| ---------------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| options                | any[]                    | Options to be displayed in the wheel picker. Options are rendered from top to bottom, meaning the first item in the options will be at the top and the last at the bottom.                                                                                                        |
+| selectedIndex          | number                   | Index of the currently selected option.                                                                                                                                                                                                                                           |
+| onChange               | (index: number) => void  | Handler that is called when the selected option changes.                                                                                                                                                                                                                          |
+| visibleRest            | number                   | Amount of additional options that are visible in each direction. Default is 2, resulting in 5 visible options.                                                                                                                                                                    |
+| itemHeight             | number                   | Height of each option in the picker. Default is 40.                                                                                                                                                                                                                               |
+| itemStyle              | StyleProp\<ViewStyle\>   | Style for the option's container.                                                                                                                                                                                                                                                 |
+| itemTextStyle          | StyleProp\<TextStyle\>   | Style for the option's text.                                                                                                                                                                                                                                                      |
+| containerStyle         | StyleProp\<ViewStyle\>   | Style of the picker.                                                                                                                                                                                                                                                              |
+| selectedIndicatorStyle | StyleProp\<ViewStyle\>   | Style of overlaying selected-indicator in the middle of the picker.                                                                                                                                                                                                               |
+| rotationFunction       | (x: number) => number    | Function to determine the x rotation of items based on their current distance to the center (which is x). Default is ![rotation equation](https://latex.codecogs.com/gif.latex?%5Csmall%20f%28x%29%20%3D%201%20-%20%5Cleft%20%28%201%5Cover2%20%5Cright%20%29%20%5E%7Bx%7D)       |
+| opacityFunction        | (x: number) => number    | Function to determine the opacity of items based on their current distance to the center (which is x). Default is ![opacity equation](https://latex.codecogs.com/gif.latex?%5Csmall%20f%28x%29%20%3D%20%5Cleft%20%28%201%5Cover3%20%5Cright%20%29%20%5E%7Bx%7D)                   |
+| decelerationRate       | "normal", "fast", number | How quickly the underlying scroll view decelerates after the user lifts their finger. See the [ScrollView docs](https://facebook.github.io/react-native/docs/scrollview.html#decelerationrate). Default is "fast".                                                                |
+| scrollEventThrottle    | number                   | How often the scroll event will be fired while scrolling (as a time interval in ms). Impacts tradeof between scroll performance and tracking accuracy. See the [ScrollView docs](https://facebook.github.io/react-native/docs/scrollview.html#scrolleventthrottle). Default is 1. |
