@@ -17,6 +17,7 @@ interface Props {
   onChange: (index: number) => void;
   selectedIndicatorStyle?: StyleProp<ViewStyle>;
   itemTextStyle?: TextStyle;
+  itemSelectedTextStyle?: TextStyle;
   itemStyle?: ViewStyle;
   itemHeight?: number;
   containerStyle?: ViewStyle;
@@ -39,6 +40,7 @@ const WheelPicker: React.FC<Props> = ({
   containerStyle = {},
   itemStyle = {},
   itemTextStyle = {},
+  itemSelectedTextStyle = {},
   itemHeight = 40,
   rotationFunction = (x: number) => 1 - Math.pow(1 / 2, x),
   opacityFunction = (x: number) => Math.pow(1 / 3, x),
@@ -180,10 +182,10 @@ const WheelPicker: React.FC<Props> = ({
           },
           itemStyle,
         ]}
-        textStyle={itemTextStyle}
+        textStyle={selectedIndex === index -1 ? itemSelectedTextStyle : itemTextStyle}
       />
     ),
-    [itemHeight, rotateX, translateY, opacity, itemStyle, itemTextStyle],
+    [itemHeight, rotateX, translateY, opacity, itemStyle, itemTextStyle, itemSelectedTextStyle],
   );
 
   const getItemLayout = useCallback(
