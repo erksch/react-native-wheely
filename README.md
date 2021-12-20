@@ -33,7 +33,7 @@ function CityPicker() {
 
   return (
     <WheelPicker
-      selectedIndex={selected}
+      selectedIndex={selectedIndex}
       options={['Berlin', 'London', 'Amsterdam']}
       onChange={(index) => setSelectedIndex(index)}
     />
