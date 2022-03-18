@@ -82,7 +82,10 @@ const WheelPicker: React.FC<Props> = ({
     let index = Math.floor(Math.floor(offsetY) / itemHeight);
     const last = Math.floor(offsetY % itemHeight);
     if (last > itemHeight / 2) index++;
-    onChange(index);
+
+    if (index !== selectedIndex) {
+      onChange(index);
+    }
   };
 
   return (
