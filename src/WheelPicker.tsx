@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   StyleProp,
   TextStyle,
@@ -7,13 +7,13 @@ import {
   Animated,
   ViewStyle,
   View,
-  Text,
 } from 'react-native';
 import styles from './WheelPicker.styles';
+import WheelPickerItem from './WheelPickerItem';
 
 interface Props {
   selectedIndex: number;
-  options: any[];
+  options: string[];
   onChange: (index: number) => void;
   selectedIndicatorStyle?: StyleProp<ViewStyle>;
   itemTextStyle?: TextStyle;
@@ -51,12 +51,13 @@ const WheelPicker: React.FC<Props> = ({
   removeClippedSubviews = false,
 }) => {
   const [scrollY] = useState(new Animated.Value(0));
+
   const containerHeight = (1 + visibleRest * 2) * itemHeight;
   const paddedOptions = useMemo(() => {
-    const array = [...options];
+    const array: (string | null)[] = [...options];
     for (let i = 0; i < visibleRest; i++) {
-      array.unshift(undefined);
-      array.push(undefined);
+      array.unshift(null);
+      array.push(null);
     }
     return array;
   }, [options, visibleRest]);
@@ -71,7 +72,7 @@ const WheelPicker: React.FC<Props> = ({
     [visibleRest, scrollY, itemHeight],
   );
 
-  const handleMomentumScrollEnd = useCallback((
+  const handleMomentumScrollEnd = (
     event: NativeSyntheticEvent<NativeScrollEvent>,
   ) => {
     const offsetY = event.nativeEvent.contentOffset.y;
@@ -79,126 +80,7 @@ const WheelPicker: React.FC<Props> = ({
     const last = Math.floor(offsetY % itemHeight);
     if (last > itemHeight / 2) index++;
     onChange(index);
-  }, [itemHeight, onChange]);
-
-  const relativeScrollIndex = useCallback(
-    (index: number) => Animated.subtract(index, currentScrollIndex),
-    [currentScrollIndex],
-  );
-
-  const rotateX = useCallback(
-    (index: number) =>
-      relativeScrollIndex(index).interpolate({
-        inputRange: (() => {
-          const range = [0];
-          for (let i = 1; i <= visibleRest + 1; i++) {
-            range.unshift(-i);
-            range.push(i);
-          }
-          return range;
-        })(),
-        outputRange: (() => {
-          const range = ['0deg'];
-          for (let x = 1; x <= visibleRest + 1; x++) {
-            const y = rotationFunction(x);
-            range.unshift(`${y}deg`);
-            range.push(`${y}deg`);
-          }
-          return range;
-        })(),
-      }),
-    [relativeScrollIndex, rotationFunction, visibleRest],
-  );
-
-  const translateY = useCallback(
-    (index: number) =>
-      relativeScrollIndex(index).interpolate({
-        inputRange: (() => {
-          const range = [0];
-          for (let i = 1; i <= visibleRest + 1; i++) {
-            range.unshift(-i);
-            range.push(i);
-          }
-          return range;
-        })(),
-        outputRange: (() => {
-          const range = [0];
-          for (let i = 1; i <= visibleRest + 1; i++) {
-            let y =
-              (itemHeight / 2) *
-              (1 - Math.sin(Math.PI / 2 - rotationFunction(i)));
-            for (let j = 1; j < i; j++) {
-              y +=
-                itemHeight * (1 - Math.sin(Math.PI / 2 - rotationFunction(j)));
-            }
-            range.unshift(y);
-            range.push(-y);
-          }
-          return range;
-        })(),
-      }),
-    [relativeScrollIndex, visibleRest, itemHeight, rotationFunction],
-  );
-
-  const opacity = useCallback(
-    (index: number) =>
-      relativeScrollIndex(index).interpolate({
-        inputRange: (() => {
-          const range = [0];
-          for (let i = 1; i <= visibleRest + 1; i++) {
-            range.unshift(-i);
-            range.push(i);
-          }
-          return range;
-        })(),
-        outputRange: (() => {
-          const range = [1];
-          for (let x = 1; x <= visibleRest + 1; x++) {
-            const y = opacityFunction(x);
-            range.unshift(y);
-            range.push(y);
-          }
-          return range;
-        })(),
-      }),
-    [opacityFunction, relativeScrollIndex, visibleRest],
-  );
-
-  const renderItem = useCallback(
-    ({ item: option, index }: any) => (
-      <MemoizedWheelPickerItem
-        key={`option-${index}`}
-        option={option}
-        style={[
-          {
-            height: itemHeight,
-            transform: [
-              { rotateX: rotateX(index) },
-              { translateY: translateY(index) },
-            ],
-            opacity: opacity(index),
-          },
-          itemStyle,
-        ]}
-        textStyle={itemTextStyle}
-      />
-    ),
-    [itemHeight, rotateX, translateY, opacity, itemStyle, itemTextStyle],
-  );
-
-  const getItemLayout = useCallback(
-    (data: any, index: number) => ({
-      length: itemHeight,
-      offset: itemHeight * index,
-      index,
-    }),
-    [itemHeight],
-  );
-
-  const keyExtractor = useCallback(
-    (item: any, index: number) => index.toString(),
-    [],
-  );
+  };
 
   return (
     <View
@@ -214,7 +96,7 @@ const WheelPicker: React.FC<Props> = ({
           },
         ]}
       />
-      <Animated.FlatList
+      <Animated.FlatList<string | null>
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={scrollEventThrottle}
@@ -230,29 +112,30 @@ const WheelPicker: React.FC<Props> = ({
         snapToOffsets={offsets}
         decelerationRate={decelerationRate}
         initialScrollIndex={selectedIndex}
-        getItemLayout={getItemLayout}
+        getItemLayout={(data, index) => ({
+          length: itemHeight,
+          offset: itemHeight * index,
+          index,
+        })}
         data={paddedOptions}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item: option, index }) => (
+          <WheelPickerItem
+            key={`option-${index}`}
+            index={index}
+            option={option}
+            style={itemStyle}
+            textStyle={itemTextStyle}
+            height={itemHeight}
+            currentScrollIndex={currentScrollIndex}
+            rotationFunction={rotationFunction}
+            opacityFunction={opacityFunction}
+            visibleRest={visibleRest}
+          />
+        )}
       />
     </View>
   );
 };
-
-interface ItemProps {
-  style: any;
-  textStyle: StyleProp<TextStyle>;
-  option: string;
-}
-
-const WheelPickerItem: React.FC<ItemProps> = ({ style, textStyle, option }) => {
-  return (
-    <Animated.View style={[styles.option, style]}>
-      <Text style={textStyle}>{option}</Text>
-    </Animated.View>
-  );
-};
-
-const MemoizedWheelPickerItem = memo(WheelPickerItem);
 
 export default WheelPicker;
