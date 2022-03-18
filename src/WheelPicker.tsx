@@ -7,6 +7,7 @@ import {
   Animated,
   ViewStyle,
   View,
+  ViewProps,
 } from 'react-native';
 import styles from './WheelPicker.styles';
 import WheelPickerItem from './WheelPickerItem';
@@ -20,6 +21,7 @@ interface Props {
   itemStyle?: ViewStyle;
   itemHeight?: number;
   containerStyle?: ViewStyle;
+  containerProps?: Omit<ViewProps, 'style'>;
   rotationFunction?: (x: number) => number;
   opacityFunction?: (x: number) => number;
   visibleRest?: number;
@@ -49,6 +51,7 @@ const WheelPicker: React.FC<Props> = ({
   maxToRenderPerBatch = 10,
   initialNumToRender = 10,
   removeClippedSubviews = false,
+  containerProps = {},
 }) => {
   const [scrollY] = useState(new Animated.Value(0));
 
@@ -85,6 +88,7 @@ const WheelPicker: React.FC<Props> = ({
   return (
     <View
       style={[styles.container, { height: containerHeight }, containerStyle]}
+      {...containerProps}
     >
       <View
         style={[
