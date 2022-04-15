@@ -1,5 +1,14 @@
 import React from 'react';
-import { StyleProp, TextStyle, Animated, Text, ViewStyle } from 'react-native';
+import {
+  NativeSyntheticEvent,
+  NativeTouchEvent,
+  StyleProp,
+  TextStyle,
+  Animated,
+  Text,
+  TouchableOpacity,
+  ViewStyle,
+} from 'react-native';
 import styles from './WheelPicker.styles';
 
 interface ItemProps {
@@ -12,6 +21,7 @@ interface ItemProps {
   visibleRest: number;
   rotationFunction: (x: number) => number;
   opacityFunction: (x: number) => number;
+  onItemPress: (event: NativeSyntheticEvent<NativeTouchEvent>) => void;
 }
 
 const WheelPickerItem: React.FC<ItemProps> = ({
@@ -24,6 +34,7 @@ const WheelPickerItem: React.FC<ItemProps> = ({
   currentScrollIndex,
   opacityFunction,
   rotationFunction,
+  onItemPress,
 }) => {
   const relativeScrollIndex = Animated.subtract(index, currentScrollIndex);
 
@@ -99,7 +110,9 @@ const WheelPickerItem: React.FC<ItemProps> = ({
         { height, opacity, transform: [{ translateY }, { rotateX }] },
       ]}
     >
-      <Text style={textStyle}>{option}</Text>
+      <TouchableOpacity activeOpacity={1} onPress={onItemPress}>
+        <Text style={textStyle}>{option}</Text>
+      </TouchableOpacity>
     </Animated.View>
   );
 };
