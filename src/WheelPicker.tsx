@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   StyleProp,
   TextStyle,
@@ -53,6 +53,8 @@ const WheelPicker: React.FC<Props> = ({
   removeClippedSubviews = false,
   containerProps = {},
 }) => {
+  const listRef = useRef<any>(null);
+
   const [scrollY] = useState(new Animated.Value(0));
 
   const containerHeight = (1 + visibleRest * 2) * itemHeight;
@@ -81,10 +83,18 @@ const WheelPicker: React.FC<Props> = ({
     const offsetY = event.nativeEvent.contentOffset.y;
     let index = Math.floor(Math.floor(offsetY) / itemHeight);
     const last = Math.floor(offsetY % itemHeight);
+
     if (last > itemHeight / 2) index++;
 
     if (index !== selectedIndex) {
       onChange(index);
+    }
+  };
+
+  const handleItemPress = (index: number) => {
+    if (listRef.current) {
+      const adjustedIndex = Math.max(index - visibleRest, 0);
+      listRef.current.scrollToIndex({ index: adjustedIndex });
     }
   };
 
@@ -104,6 +114,7 @@ const WheelPicker: React.FC<Props> = ({
         ]}
       />
       <Animated.FlatList<string | null>
+        ref={listRef}
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={scrollEventThrottle}
@@ -138,6 +149,7 @@ const WheelPicker: React.FC<Props> = ({
             rotationFunction={rotationFunction}
             opacityFunction={opacityFunction}
             visibleRest={visibleRest}
+            onItemPress={() => handleItemPress(index)}
           />
         )}
       />
