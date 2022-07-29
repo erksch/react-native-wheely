@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   StyleProp,
   TextStyle,
@@ -9,6 +9,7 @@ import {
   View,
   ViewProps,
   FlatListProps,
+  FlatList,
 } from 'react-native';
 import styles from './WheelPicker.styles';
 import WheelPickerItem from './WheelPickerItem';
@@ -46,6 +47,7 @@ const WheelPicker: React.FC<Props> = ({
   containerProps = {},
   flatListProps = {},
 }) => {
+  const flatListRef = useRef<FlatList>(null);
   const [scrollY] = useState(new Animated.Value(0));
 
   const containerHeight = (1 + visibleRest * 2) * itemHeight;
@@ -81,6 +83,17 @@ const WheelPicker: React.FC<Props> = ({
     }
   };
 
+  /**
+   * If selectedIndex is changed from outside (not via onChange) we need to scroll to the specified index.
+   * This ensures that what the user sees as selected in the picker always corresponds to the value state.
+   */
+  useEffect(() => {
+    flatListRef.current?.scrollToIndex({
+      index: selectedIndex,
+      animated: false,
+    });
+  }, [selectedIndex]);
+
   return (
     <View
       style={[styles.container, { height: containerHeight }, containerStyle]}
@@ -98,6 +111,7 @@ const WheelPicker: React.FC<Props> = ({
       />
       <Animated.FlatList<string | null>
         {...flatListProps}
+        ref={flatListRef}
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         onScroll={Animated.event(
