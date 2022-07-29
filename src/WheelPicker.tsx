@@ -8,6 +8,7 @@ import {
   ViewStyle,
   View,
   ViewProps,
+  FlatListProps,
 } from 'react-native';
 import styles from './WheelPicker.styles';
 import WheelPickerItem from './WheelPickerItem';
@@ -26,11 +27,7 @@ interface Props {
   opacityFunction?: (x: number) => number;
   visibleRest?: number;
   decelerationRate?: 'normal' | 'fast' | number;
-  scrollEventThrottle?: number;
-  maxToRenderPerBatch?: number;
-  updateCellsBatchingPeriod?: number;
-  initialNumToRender?: number;
-  removeClippedSubviews?: boolean;
+  flatListProps?: Omit<FlatListProps<string | null>, 'data' | 'renderItem'>;
 }
 
 const WheelPicker: React.FC<Props> = ({
@@ -46,12 +43,8 @@ const WheelPicker: React.FC<Props> = ({
   opacityFunction = (x: number) => Math.pow(1 / 3, x),
   visibleRest = 2,
   decelerationRate = 'fast',
-  scrollEventThrottle = 1,
-  updateCellsBatchingPeriod = 50,
-  maxToRenderPerBatch = 10,
-  initialNumToRender = 10,
-  removeClippedSubviews = false,
   containerProps = {},
+  flatListProps = {},
 }) => {
   const [scrollY] = useState(new Animated.Value(0));
 
@@ -104,13 +97,9 @@ const WheelPicker: React.FC<Props> = ({
         ]}
       />
       <Animated.FlatList<string | null>
+        {...flatListProps}
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
-        scrollEventThrottle={scrollEventThrottle}
-        updateCellsBatchingPeriod={updateCellsBatchingPeriod}
-        maxToRenderPerBatch={maxToRenderPerBatch}
-        initialNumToRender={initialNumToRender}
-        removeClippedSubviews={removeClippedSubviews}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: true },
