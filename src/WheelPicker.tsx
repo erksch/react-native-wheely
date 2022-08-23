@@ -10,7 +10,7 @@ import {
   ViewProps,
   FlatListProps,
   FlatList,
-  Platform
+  Platform,
 } from 'react-native';
 import styles from './WheelPicker.styles';
 import WheelPickerItem from './WheelPickerItem';
@@ -98,7 +98,6 @@ const WheelPicker: React.FC<Props> = ({
     });
   }, [selectedIndex]);
 
-
   useEffect(() => {
     if (Platform.OS === 'web') {
       const SCROLL_COOLDOWN_MILLISECONDS = 100;
@@ -158,8 +157,7 @@ const WheelPicker: React.FC<Props> = ({
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           {
             useNativeDriver: true,
-            listener: (event: NativeSyntheticEvent<any>
-            ) => handleScroll(event),
+            listener: (event: NativeSyntheticEvent<any>) => handleScroll(event),
           },
         )}
         onMomentumScrollEnd={handleMomentumScrollEnd}
