@@ -12,6 +12,7 @@ interface ItemProps {
   visibleRest: number;
   rotationFunction: (x: number) => number;
   opacityFunction: (x: number) => number;
+  scaleFunction: (x: number) => number;
 }
 
 const WheelPickerItem: React.FC<ItemProps> = ({
@@ -24,6 +25,7 @@ const WheelPickerItem: React.FC<ItemProps> = ({
   currentScrollIndex,
   opacityFunction,
   rotationFunction,
+  scaleFunction
 }) => {
   const relativeScrollIndex = Animated.subtract(index, currentScrollIndex);
 
@@ -71,6 +73,26 @@ const WheelPickerItem: React.FC<ItemProps> = ({
     })(),
   });
 
+  const scale = relativeScrollIndex.interpolate({
+    inputRange: (() => {
+      const range = [0];
+      for (let i = 1; i <= visibleRest + 1; i++) {
+        range.unshift(-i);
+        range.push(i);
+      }
+      return range;
+    })(),
+    outputRange: (() => {
+      const range = [1.0];
+      for (let x = 1; x <= visibleRest + 1; x++) {
+        const y = scaleFunction(x);
+        range.unshift(y);
+        range.push(y);
+      }
+      return range;
+    })(),
+  });
+
   const rotateX = relativeScrollIndex.interpolate({
     inputRange: (() => {
       const range = [0];
@@ -96,7 +118,7 @@ const WheelPickerItem: React.FC<ItemProps> = ({
       style={[
         styles.option,
         style,
-        { height, opacity, transform: [{ translateY }, { rotateX }] },
+        {  height, opacity, transform: [{ translateY }, { rotateX }, { scale }]},
       ]}
     >
       <Text style={textStyle}>{option}</Text>
