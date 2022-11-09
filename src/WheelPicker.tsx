@@ -41,7 +41,7 @@ const WheelPicker: React.FC<Props> = ({
   itemStyle = {},
   itemTextStyle = {},
   itemHeight = 40,
-  scaleFunction = (x: number) => 0.7 ** x,
+  scaleFunction = (x: number) => 1.0 ** x,
   rotationFunction = (x: number) => 1 - Math.pow(1 / 2, x),
   opacityFunction = (x: number) => Math.pow(1 / 3, x),
   visibleRest = 2,
