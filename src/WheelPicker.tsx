@@ -75,7 +75,14 @@ const WheelPicker: React.FC<Props> = ({
   const handleMomentumScrollEnd = (
     event: NativeSyntheticEvent<NativeScrollEvent>,
   ) => {
-    const offsetY = event.nativeEvent.contentOffset.y;
+    // Due to list bounciness when scrolling to the start or the end of the list
+    // the offset might be negative or over the last item.
+    // We therefore clamp the offset to the supported range.
+    const offsetY = Math.min(
+      itemHeight * (options.length - 1),
+      Math.max(event.nativeEvent.contentOffset.y, 0),
+    );
+
     let index = Math.floor(Math.floor(offsetY) / itemHeight);
     const last = Math.floor(offsetY % itemHeight);
     if (last > itemHeight / 2) index++;
@@ -84,6 +91,16 @@ const WheelPicker: React.FC<Props> = ({
       onChange(index);
     }
   };
+
+  useEffect(() => {
+    if (selectedIndex < 0 || selectedIndex >= options.length) {
+      throw new Error(
+        `Selected index ${selectedIndex} is out of bounds [0, ${
+          options.length - 1
+        }]`,
+      );
+    }
+  }, [selectedIndex, options]);
 
   /**
    * If selectedIndex is changed from outside (not via onChange) we need to scroll to the specified index.
