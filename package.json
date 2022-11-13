@@ -1,6 +1,6 @@
 {
   "name": "react-native-wheely",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "An all JavaScript, highly customizable wheel picker for react-native.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
