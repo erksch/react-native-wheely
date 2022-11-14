@@ -6,6 +6,8 @@
 
 An all JavaScript, highly customizable wheel picker for react native.
 
+<img src="./screenshots/design_5_gray.jpg" align="center"  alt="drawing" height="200"/><img src="./screenshots/design_5_blue.jpg" align="center" alt="drawing" height="200"/><img src="./screenshots/design_5_plane.jpg" align="center"  alt="drawing" height="200" /><img src="./screenshots/design_5_gray_box.jpg" align="center" alt="drawing" height="200" /><img src="./screenshots/design_3_gray.jpg" align="center" alt="drawing" height="110" /><img src="./screenshots/design_3_plane.jpg" align="center" alt="drawing" height="150" /><img src="./screenshots/design_scale.png" align="center" alt="drawing" height="200" />
+
 ## Installation
 
 Install with npm
