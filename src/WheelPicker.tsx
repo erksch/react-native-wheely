@@ -1,15 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
+  Animated,
+  FlatList,
+  FlatListProps,
   StyleProp,
   TextStyle,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
-  Animated,
-  ViewStyle,
   View,
   ViewProps,
-  FlatListProps,
-  FlatList,
+  ViewStyle,
 } from 'react-native';
 import styles from './WheelPicker.styles';
 import WheelPickerItem from './WheelPickerItem';
@@ -42,8 +40,8 @@ const WheelPicker: React.FC<Props> = ({
   itemTextStyle = {},
   itemHeight = 40,
   scaleFunction = (x: number) => 1.0 ** x,
-  rotationFunction = (x: number) => 1 - Math.pow(1 / 2, x),
-  opacityFunction = (x: number) => Math.pow(1 / 3, x),
+  rotationFunction = (x: number) => 1 - (1 / 2) ** x,
+  opacityFunction = (x: number) => (1 / 3) ** x,
   visibleRest = 2,
   decelerationRate = 'fast',
   containerProps = {},
@@ -51,7 +49,7 @@ const WheelPicker: React.FC<Props> = ({
 }) => {
   const flatListRef = useRef<FlatList>(null);
   const [scrollY] = useState(new Animated.Value(0));
-
+  const calculatedSelectingIndex = React.useRef<number>(selectedIndex);
   const containerHeight = (1 + visibleRest * 2) * itemHeight;
   const paddedOptions = useMemo(() => {
     const array: (string | null)[] = [...options];
@@ -72,23 +70,16 @@ const WheelPicker: React.FC<Props> = ({
     [visibleRest, scrollY, itemHeight],
   );
 
-  const handleMomentumScrollEnd = (
-    event: NativeSyntheticEvent<NativeScrollEvent>,
-  ) => {
-    // Due to list bounciness when scrolling to the start or the end of the list
-    // the offset might be negative or over the last item.
-    // We therefore clamp the offset to the supported range.
-    const offsetY = Math.min(
-      itemHeight * (options.length - 1),
-      Math.max(event.nativeEvent.contentOffset.y, 0),
+  currentScrollIndex.addListener(({ value }) => {
+    calculatedSelectingIndex.current = Math.min(
+      Math.max(0, Math.round(value) - visibleRest),
+      options.length - 1,
     );
+  });
 
-    let index = Math.floor(Math.floor(offsetY) / itemHeight);
-    const last = Math.floor(offsetY % itemHeight);
-    if (last > itemHeight / 2) index++;
-
-    if (index !== selectedIndex) {
-      onChange(index);
+  const handleMomentumScrollEnd = () => {
+    if (calculatedSelectingIndex.current !== selectedIndex) {
+      onChange(calculatedSelectingIndex.current);
     }
   };
 
@@ -141,13 +132,13 @@ const WheelPicker: React.FC<Props> = ({
         snapToOffsets={offsets}
         decelerationRate={decelerationRate}
         initialScrollIndex={selectedIndex}
-        getItemLayout={(data, index) => ({
+        getItemLayout={(_, index) => ({
           length: itemHeight,
           offset: itemHeight * index,
           index,
         })}
         data={paddedOptions}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(_, index) => index.toString()}
         renderItem={({ item: option, index }) => (
           <WheelPickerItem
             key={`option-${index}`}
