@@ -64,3 +64,7 @@ function CityPicker() {
 ## Memoization
 
 The individual items in the picker (`<WheelPickerItem />`) are [strictly memoized](https://github.com/erksch/react-native-wheely/blob/master/src/WheelPickerItem.tsx#L109-L114), meaning that they will not rerender after the initial render. Rerendering the picker items uncontrollably would lead to bad performance with large number of options. Item styles, animation functions and other parameters of items therefore must be static and changes to them after the initial render will have no effect.
+
+
+## ScrollView
+If you need to use this component inside another scrollView, we suggest to use the scrollView imported from `react-native-gesture-handler`, and also you must turn on the `nestedScrollEnabled` property of your scrollView (for Android devices).

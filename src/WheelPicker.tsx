@@ -131,6 +131,7 @@ const WheelPicker: React.FC<Props> = ({
       <Animated.FlatList<string | null>
         {...flatListProps}
         ref={flatListRef}
+        nestedScrollEnabled
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         onScroll={Animated.event(
