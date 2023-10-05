@@ -192,7 +192,6 @@
     "flow-parser": "^0.121.0",
     "functional-red-black-tree": "^1.0.1",
     "get-caller-file": "^2.0.5",
-    "fsevents": "^2.3.2",
     "get-intrinsic": "^1.1.1",
     "gensync": "^1.0.0-beta.2",
     "get-stream": "^4.1.0",
