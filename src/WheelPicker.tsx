@@ -14,7 +14,7 @@ import {
 import styles from './WheelPicker.styles';
 import WheelPickerItem from './WheelPickerItem';
 
-interface WheelPickerRef {
+export interface WheelPickerRef {
     scrollToIndex: (params: { index: number, animated?: boolean }) => void;
 }
 
