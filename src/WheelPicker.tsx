@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState, useImperativeHandle, forwardRef } from 'react';
 import {
   StyleProp,
   TextStyle,
@@ -13,6 +13,10 @@ import {
 } from 'react-native';
 import styles from './WheelPicker.styles';
 import WheelPickerItem from './WheelPickerItem';
+
+export interface WheelPickerRef {
+    scrollToIndex: (params: { index: number, animated?: boolean }) => void;
+}
 
 interface Props {
   selectedIndex: number;
@@ -29,26 +33,30 @@ interface Props {
   opacityFunction?: (x: number) => number;
   visibleRest?: number;
   decelerationRate?: 'normal' | 'fast' | number;
-  flatListProps?: Omit<FlatListProps<string | null>, 'data' | 'renderItem'>;
+  flatListProps?: Omit<FlatListProps< string>, 'data' | 'renderItem'>;
 }
 
-const WheelPicker: React.FC<Props> = ({
-  selectedIndex,
-  options,
-  onChange,
-  selectedIndicatorStyle = {},
-  containerStyle = {},
-  itemStyle = {},
-  itemTextStyle = {},
-  itemHeight = 40,
-  scaleFunction = (x: number) => 1.0 ** x,
-  rotationFunction = (x: number) => 1 - Math.pow(1 / 2, x),
-  opacityFunction = (x: number) => Math.pow(1 / 3, x),
-  visibleRest = 2,
-  decelerationRate = 'fast',
-  containerProps = {},
-  flatListProps = {},
-}) => {
+const WheelPicker = forwardRef<WheelPickerRef, Props>(
+    (
+        {
+          selectedIndex,
+          options,
+          onChange,
+          selectedIndicatorStyle = {},
+          containerStyle = {},
+          itemStyle = {},
+          itemTextStyle = {},
+          itemHeight = 40,
+          scaleFunction = (x: number) => 1.0 ** x,
+          rotationFunction = (x: number) => 1 - Math.pow(1 / 2, x),
+          opacityFunction = (x: number) => Math.pow(1 / 3, x),
+          visibleRest = 2,
+          decelerationRate = 'fast',
+          containerProps = {},
+          flatListProps = {},
+        },
+        ref
+    ) => {
   const flatListRef = useRef<FlatList>(null);
   const [scrollY] = useState(new Animated.Value(0));
 
@@ -113,6 +121,13 @@ const WheelPicker: React.FC<Props> = ({
     });
   }, [selectedIndex]);
 
+        // Assuming you want to expose scrollToIndex method to the parent
+useImperativeHandle(ref, () => ({
+    scrollToIndex: (params) => {
+         flatListRef.current?.scrollToIndex(params);
+    },
+}));
+
   return (
     <View
       style={[styles.container, { height: containerHeight }, containerStyle]}
@@ -166,6 +181,9 @@ const WheelPicker: React.FC<Props> = ({
       />
     </View>
   );
-};
+});
+
+WheelPicker.displayName = 'WheelPicker';
+
 
 export default WheelPicker;

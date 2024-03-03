@@ -1,10 +1,13 @@
 {
-  "name": "react-native-wheely",
-  "version": "0.6.0",
+  "name": "@vidit-me/react-native-wheely",
+  "version": "0.7.1",
   "description": "An all JavaScript, highly customizable wheel picker for react-native.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "repository": "https://github.com/erksch/react-native-wheely",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erksch/react-native-wheely.git"
+  },
   "author": "erksch (Erik Ziegler)",
   "license": "MIT",
   "keywords": [
@@ -36,5 +39,12 @@
     "react": "^17.0.2",
     "react-native": "^0.67.3",
     "typescript": "^4.6.2"
+  },
+  "bugs": {
+    "url": "https://github.com/erksch/react-native-wheely/issues"
+  },
+  "homepage": "https://github.com/erksch/react-native-wheely#readme",
+  "directories": {
+    "lib": "lib"
   }
 }
